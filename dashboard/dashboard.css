@@ -1,0 +1,121 @@
+/* Background Image */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('./istockphoto-1060352206-612x612%20(1).jpg') no-repeat center center;
+    background-size: cover;
+    filter: brightness(50%);
+    z-index: -1;
+    opacity: 0.8;
+}
+
+/* General Styles */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+    font-size: 28px;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Shadow for better readability */
+}
+
+.food-contribution {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px; /* Space between text and button */
+}
+
+.instruction {
+    font-size: 25px;
+    color: white;
+
+}
+
+/* Header Styling */
+header {
+    font-size: larger;
+    background-color: #16404D;
+    color: #A6CDC6;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0.9;
+}
+
+header button {
+    background-color: #4E89AE;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+header button:hover {
+    background-color: #43658B;
+}
+
+/* Add Food Button */
+#add-food {
+    font-size: 28px;
+    padding: 10px;
+    background-color: #4E89AE;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    width: 50px;
+    height: 50px;
+    transition: background-color 0.3s;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#add-food:hover {
+    background-color: #43658B;
+}
+/* Form container styles */
+#form-container {
+    display: none;
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+#form-container input,
+#form-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+#form-container input:focus,
+#form-container textarea:focus {
+    border-color: #4E89AE;
+    outline: none;
+}
+
+textarea {
+    resize: none;
+    height: 60px;
+}
