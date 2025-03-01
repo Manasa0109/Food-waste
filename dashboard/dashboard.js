@@ -1,7 +1,7 @@
 const addButton = document.getElementById('add-food');
 const formContainer = document.getElementById('form-container');
 let saveButton;
-
+ 
 addButton.addEventListener('click', () => {
     formContainer.style.display = 'block';
     formContainer.innerHTML = '';
@@ -13,7 +13,7 @@ addButton.addEventListener('click', () => {
     foodAvail.type = 'number';
     foodAvail.placeholder = 'Availability in kgs';
     formContainer.appendChild(foodAvail);
-
+    
     const people = document.createElement('input');
     people.type = 'number';
     people.placeholder = 'Expected number of people to eat';
@@ -60,7 +60,7 @@ addButton.addEventListener('click', () => {
                 emailVal
             };
             try{
-                const response=await fetch("http://localhost:3000/add-data",{
+                const response=await fetch("http://localhost:8080/add-data",{
                 method:"POST",
                 headers: {"Content-Type":"application/json"},
                 body:JSON.stringify(foodData)

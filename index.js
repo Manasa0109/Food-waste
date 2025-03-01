@@ -5,7 +5,7 @@ const uri=process.env.MONGO_URI;
 const client=new MongoClient(uri);
 const app=express();
 const path = require("path");
-const port=3000;
+const port=8080;
 app.use(express.json());
 app.use(express.static(__dirname));
 async function connectDB(){

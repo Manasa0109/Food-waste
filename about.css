@@ -1,0 +1,49 @@
+body {
+    background: url('about_food.jpg') no-repeat center center/cover;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    z-index:-2;
+   
+}
+
+
+h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-top: 30px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    background: rgba(0, 0, 0, 0.6); 
+    padding: 20px;
+    border-radius: 10px;
+    display: inline-block;
+    max-width: 80%;
+}
+
+p b {
+    color: #FFD700;
+    font-size: 1.3rem;
+}
+
+p br {
+    display: block;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    p {
+        font-size: 1rem;
+        max-width: 90%;
+    }
+}
