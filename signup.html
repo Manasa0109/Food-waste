@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup Form</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #e6f2f2;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    form#signup-form {
+      background-color: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #16404D;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    button[type="submit"] {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #16404D;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #A6CDC6;
+      color: #16404D;
+    }
+  </style>
+</head>
+<body>
+  <form id="signup-form">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" required />
+    
+    <label for="usermail">Email</label>
+    <input type="email" id="usermail" name="usermail" required />
+    
+    <label for="location">Location</label>
+    <input type="text" id="location" name="location" required />
+    
+    <label>Select user type(s):</label><br />
+    <input type="checkbox" name="type" value="donor" /> Donor<br />
+    <input type="checkbox" name="type" value="charity" /> Charity<br />
+    <input type="checkbox" name="type" value="user" /> User<br />
+    
+    <button type="button" id="saveButton">Sign Up</button>
+  </form>
+
+  <script src="signup.js"></script>
+  
+</body>
+</html>

@@ -13,7 +13,7 @@ addButton.addEventListener('click', () => {
     foodAvail.type = 'number';
     foodAvail.placeholder = 'Availability in kgs';
     formContainer.appendChild(foodAvail);
-    
+
     const people = document.createElement('input');
     people.type = 'number';
     people.placeholder = 'Expected number of people to eat';
@@ -32,7 +32,6 @@ addButton.addEventListener('click', () => {
     mail.type = 'email';
     mail.placeholder = 'Enter your email';
     formContainer.appendChild(mail);
-
     // Create the save button
     if (!saveButton) {
         saveButton = document.createElement('button');
