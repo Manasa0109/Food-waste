@@ -8,7 +8,7 @@ const port = 8080;
 
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
-
+const sendEmail = require("./emailService");
 app.use(express.json());
 app.use(express.static(__dirname));
 
@@ -57,10 +57,15 @@ app.post("/add-data", async (req, res) => {
       expectedPeople,
       location,
       contact,
-      emailVal
+      emailVal,
+      createdAt:new Date()
     });
-
-    res.status(201).json({ message: "Food data added successfully", insertedId: result.insertedId });
+    const recipients=await usersCollection.find({userTypes:{$in:["user","charity"]}}).toArray();
+    for(let user of recipients){
+      const message=`Hey ${user.userName},\n\nNew food donation available!\n\n Item:${foodItem}\n ,Location:${location}\n Serves:${expectedPeople} people\n Contact:${contact}\n\n Hurry up and grab it!`;
+      await sendEmail(user.email,"🍱 New Food Donation Available!",message);
+    }
+    res.status(201).json({ message: "Food data added successfully and notifications sent", insertedId: result.insertedId });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
