@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const path = require("path");
 
 const app = express();
@@ -9,6 +9,7 @@ const port = 8080;
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
 const sendEmail = require("./emailService");
+
 app.use(express.json());
 app.use(express.static(__dirname));
 
@@ -28,12 +29,10 @@ const foodCollection = foodDB.collection("food_waste");
 const userDB = client.db("User_details");
 const usersCollection = userDB.collection("users");
 
-// Route: Homepage (for food data entry)
+// Pages
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "homepage.html"));
 });
-
-// Route: Signup Page
 app.get("/signup", (req, res) => {
   res.sendFile(path.join(__dirname, "signup.html"));
 });
@@ -41,8 +40,7 @@ app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "login.html"));
 });
 
-
-// 🔽 POST: Store Food Waste Data
+// Add food data
 app.post("/add-data", async (req, res) => {
   try {
     const { foodItem, availability, expectedPeople, location, contact, emailVal } = req.body;
@@ -58,19 +56,23 @@ app.post("/add-data", async (req, res) => {
       location,
       contact,
       emailVal,
-      createdAt:new Date()
+      createdAt: new Date()
     });
-    const recipients=await usersCollection.find({userTypes:{$in:["user","charity"]}}).toArray();
-    for(let user of recipients){
-      const message=`Hey ${user.userName},\n\nNew food donation available!\n\n Item:${foodItem}\n ,Location:${location}\n Serves:${expectedPeople} people\n Contact:${contact}\n\n Hurry up and grab it!`;
-      await sendEmail(user.email,"🍱 New Food Donation Available!",message);
+
+    const recipients = await usersCollection.find({ userTypes: { $in: ["user", "charity"] } }).toArray();
+
+    for (let user of recipients) {
+      const message = `Hey ${user.userName},\n\nNew food donation available!\n\nItem: ${foodItem}\nLocation: ${location}\nServes: ${expectedPeople} people\nContact: ${contact}\n\nHurry up and grab it!`;
+      await sendEmail(user.email, "🍱 New Food Donation Available!", message);
     }
+
     res.status(201).json({ message: "Food data added successfully and notifications sent", insertedId: result.insertedId });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-//  GET: Available Foods
+
+// Get all available foods
 app.get("/available-foods", async (req, res) => {
   try {
     const foods = await foodCollection.find({ accepted: { $ne: true } }).toArray();
@@ -78,7 +80,6 @@ app.get("/available-foods", async (req, res) => {
       ...food,
       _id: food._id.toString()
     }));
-    
     res.json(formattedFoods);
   } catch (error) {
     console.error("Error fetching available foods:", error);
@@ -86,7 +87,7 @@ app.get("/available-foods", async (req, res) => {
   }
 });
 
-// 🔽 POST: Accept Food Donation
+// Accept a food item
 app.post("/accept-food", async (req, res) => {
   try {
     const { foodId, donorEmail, userName, userEmail } = req.body;
@@ -95,14 +96,11 @@ app.post("/accept-food", async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const { ObjectId } = require("mongodb");
-
     const result = await foodCollection.updateOne(
       { _id: new ObjectId(foodId) },
       { $set: { accepted: true, acceptedBy: userName, acceptedByEmail: userEmail, acceptedAt: new Date() } }
     );
 
-    // Optional: Send email to the donor
     const message = `Hi, your food donation has been accepted by ${userName} (${userEmail}).\n\nThank you for contributing! 🙏`;
     await sendEmail(donorEmail, "🎉 Your Food Donation Has Been Accepted!", message);
 
@@ -113,7 +111,7 @@ app.post("/accept-food", async (req, res) => {
   }
 });
 
-// 🔽 POST: Store User Signup Data
+// Signup route
 app.post("/signup", async (req, res) => {
   try {
     const { userName, email, userLocation, userTypes } = req.body;
@@ -135,20 +133,23 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.post("/login",async(req,res)=>{
-  const {email,userName}=req.body;
-  if(!email||!userName){
-    return res.status(400).json({error:"Email and Name are required"});
+// ✅ Updated Login Route with consistent error key
+app.post("/login", async (req, res) => {
+  const { email, userName } = req.body;
+
+  if (!email || !userName) {
+    return res.status(400).json({ error: "Email and Name are required" });
   }
-  try{
-    const user=await usersCollection.findOne({email,userName});
-    if(user){
-      res.status(200).json({message:"Login Successful"});
-    }else{
-      res.status(401).json({message:"Invalid Credentials"});
+
+  try {
+    const user = await usersCollection.findOne({ email, userName });
+
+    if (user) {
+      res.status(200).json({ message: "Login Successful" });
+    } else {
+      res.status(401).json({ error: "Invalid Credentials" }); // Consistent error key
     }
-  }
-  catch(error){
+  } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
