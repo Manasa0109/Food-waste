@@ -70,6 +70,48 @@ app.post("/add-data", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+//  GET: Available Foods
+app.get("/available-foods", async (req, res) => {
+  try {
+    const foods = await foodCollection.find({ accepted: { $ne: true } }).toArray();
+    const formattedFoods = foods.map(food => ({
+      ...food,
+      _id: food._id.toString()
+    }));
+    
+    res.json(formattedFoods);
+  } catch (error) {
+    console.error("Error fetching available foods:", error);
+    res.status(500).json({ error: "Failed to fetch food data" });
+  }
+});
+
+// 🔽 POST: Accept Food Donation
+app.post("/accept-food", async (req, res) => {
+  try {
+    const { foodId, donorEmail, userName, userEmail } = req.body;
+
+    if (!foodId || !donorEmail || !userName || !userEmail) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const { ObjectId } = require("mongodb");
+
+    const result = await foodCollection.updateOne(
+      { _id: new ObjectId(foodId) },
+      { $set: { accepted: true, acceptedBy: userName, acceptedByEmail: userEmail, acceptedAt: new Date() } }
+    );
+
+    // Optional: Send email to the donor
+    const message = `Hi, your food donation has been accepted by ${userName} (${userEmail}).\n\nThank you for contributing! 🙏`;
+    await sendEmail(donorEmail, "🎉 Your Food Donation Has Been Accepted!", message);
+
+    res.status(200).json({ message: "Food accepted and donor notified." });
+  } catch (error) {
+    console.error("Error accepting food:", error);
+    res.status(500).json({ error: "Failed to accept food" });
+  }
+});
 
 // 🔽 POST: Store User Signup Data
 app.post("/signup", async (req, res) => {
@@ -103,7 +145,7 @@ app.post("/login",async(req,res)=>{
     if(user){
       res.status(200).json({message:"Login Successful"});
     }else{
-      res.status(401).json({message:"Login Successful"});
+      res.status(401).json({message:"Invalid Credentials"});
     }
   }
   catch(error){
@@ -111,6 +153,7 @@ app.post("/login",async(req,res)=>{
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 app.listen(port, () => {
   console.log(`🚀 Server running at http://localhost:${port}`);
 });
