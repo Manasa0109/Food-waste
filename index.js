@@ -61,12 +61,26 @@ app.post("/add-data", async (req, res) => {
 
     const recipients = await usersCollection.find({ userTypes: { $in: ["user", "charity"] } }).toArray();
 
+    const emailStatuses = [];
+
     for (let user of recipients) {
       const message = `Hey ${user.userName},\n\nNew food donation available!\n\nItem: ${foodItem}\nLocation: ${location}\nServes: ${expectedPeople} people\nContact: ${contact}\n\nHurry up and grab it!`;
-      await sendEmail(user.email, "🍱 New Food Donation Available!", message);
+
+      try {
+        await sendEmail(user.email, "🍱 New Food Donation Available!", message);
+        console.log(`📧 Email sent to: ${user.email}`);
+        emailStatuses.push({ email: user.email, status: "Sent" });
+      } catch (err) {
+        console.error(`❌ Failed to send email to: ${user.email}`);
+        emailStatuses.push({ email: user.email, status: "Failed" });
+      }
     }
 
-    res.status(201).json({ message: "Food data added successfully and notifications sent", insertedId: result.insertedId });
+    res.status(201).json({
+      message: "Food data added successfully and notifications sent",
+      insertedId: result.insertedId,
+      emailStatuses
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -101,8 +115,13 @@ app.post("/accept-food", async (req, res) => {
       { $set: { accepted: true, acceptedBy: userName, acceptedByEmail: userEmail, acceptedAt: new Date() } }
     );
 
-    const message = `Hi, your food donation has been accepted by ${userName} (${userEmail}).\n\nThank you for contributing! 🙏`;
-    await sendEmail(donorEmail, "🎉 Your Food Donation Has Been Accepted!", message);
+    try {
+      const message = `Hi, your food donation has been accepted by ${userName} (${userEmail}).\n\nThank you for contributing! 🙏`;
+      await sendEmail(donorEmail, "🎉 Your Food Donation Has Been Accepted!", message);
+      console.log(`📧 Acceptance email sent to donor: ${donorEmail}`);
+    } catch (err) {
+      console.error(`❌ Failed to send acceptance email to donor: ${donorEmail}`);
+    }
 
     res.status(200).json({ message: "Food accepted and donor notified." });
   } catch (error) {
@@ -133,7 +152,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// ✅ Updated Login Route with consistent error key
+// Login route
 app.post("/login", async (req, res) => {
   const { email, userName } = req.body;
 
@@ -147,7 +166,7 @@ app.post("/login", async (req, res) => {
     if (user) {
       res.status(200).json({ message: "Login Successful" });
     } else {
-      res.status(401).json({ error: "Invalid Credentials" }); // Consistent error key
+      res.status(401).json({ error: "Invalid Credentials" });
     }
   } catch (error) {
     console.error("Login error:", error);
