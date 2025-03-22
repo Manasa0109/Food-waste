@@ -39,6 +39,9 @@ app.get("/signup", (req, res) => {
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "login.html"));
 });
+app.get("/dashboard.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "/dashboard/dashboard.html"));
+});
 
 // Add food data
 app.post("/add-data", async (req, res) => {
@@ -164,7 +167,13 @@ app.post("/login", async (req, res) => {
     const user = await usersCollection.findOne({ email, userName });
 
     if (user) {
-      res.status(200).json({ message: "Login Successful" });
+      res.status(200).json({
+         message: "Login Successful",
+         userType:user.userTypes,
+         userName:user.userName,
+         email:user.email
+
+         });
     } else {
       res.status(401).json({ error: "Invalid Credentials" });
     }

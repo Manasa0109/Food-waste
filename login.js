@@ -23,7 +23,12 @@ loginButton.addEventListener('click', async () => {
         const result = await response.json();
         if (response.ok) {
             alert("Login Successfully");
-            window.location.href = "/"; // Redirect after login
+            if (result.userTypes === "donor") {
+                window.location.href = "/dashboard.html"; // donor dashboard
+            } else {
+                window.location.href = "/"; // regular homepage
+            }
+ // Redirect after login
         } else {
             alert("Error: " + result.error);
         }
